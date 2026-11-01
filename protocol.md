@@ -200,6 +200,7 @@ Set these environment variables before running `generate_candidates.py`:
 ```text
 OPENROUTER_API_KEY
 OPENROUTER_MODEL
+OPENROUTER_PROVIDER
 RSI_SOURCE_COMMIT
 ```
 
