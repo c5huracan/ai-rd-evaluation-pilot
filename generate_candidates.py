@@ -24,6 +24,7 @@ METADATA_DIR = ROOT / "candidates" / "metadata"
 MANIFEST_PATH = METADATA_DIR / "candidate-manifest.ndjson"
 
 MODEL = os.environ.get("OPENROUTER_MODEL")
+PROVIDER = os.environ.get("OPENROUTER_PROVIDER")
 SOURCE_COMMIT = os.environ.get("RSI_SOURCE_COMMIT")
 BASE_URL = "https://openrouter.ai/api/v1"
 TEMPERATURE = 0.2
@@ -68,7 +69,12 @@ def request_parameters(prompt: str, attempt_number: int) -> dict:
         "temperature": TEMPERATURE,
         "top_p": TOP_P,
         "max_tokens": MAX_TOKENS,
-        "extra_body": {"provider": {"allow_fallbacks": False}},
+        "extra_body": {
+            "provider": {
+                "order": [PROVIDER],
+                "allow_fallbacks": False,
+            }
+        },
     }
     if USE_SEEDS:
         params["seed"] = SEEDS[attempt_number - 1]
@@ -83,6 +89,8 @@ def main() -> None:
         raise SystemExit("OPENROUTER_MODEL is not set")
     if not SOURCE_COMMIT:
         raise SystemExit("RSI_SOURCE_COMMIT is not set")
+    if not PROVIDER:
+        raise SystemExit("OPENROUTER_PROVIDER is not set")
     if MANIFEST_PATH.exists():
         raise SystemExit(
             f"manifest already exists: {MANIFEST_PATH}; "
@@ -110,6 +118,7 @@ def main() -> None:
                 "candidate_path": str(source_path.relative_to(ROOT)),
                 "raw_response_path": str(raw_path.relative_to(ROOT)),
                 "model": MODEL,
+                "provider": PROVIDER,
                 "source_commit": SOURCE_COMMIT,
                 "temperature": TEMPERATURE,
                 "top_p": TOP_P,
