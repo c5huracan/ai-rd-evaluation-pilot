@@ -181,3 +181,55 @@ Produce:
 5. a complete results file;
 6. a short report describing results, limitations, and one proposed
    improvement to the metric.
+
+
+## Candidate generation procedure
+
+The official experiment uses one fixed OpenRouter model and one unchanged
+prompt for ten independent candidate attempts. Before generation, record the
+exact OpenRouter model slug and generation settings in the experiment
+metadata. Do not use a moving model alias or automatic model selection.
+
+The prompt is the versioned `candidate_prompt.txt` file. It may describe the
+visible task, candidate interface, development objective, and constraints,
+but must not expose hidden examples, hidden labels, hidden scores, or hidden
+evaluator implementation.
+
+Set these environment variables before running `generate_candidates.py`:
+
+```text
+OPENROUTER_API_KEY
+OPENROUTER_MODEL
+RSI_SOURCE_COMMIT
+```
+
+`RSI_SOURCE_COMMIT` identifies the Git commit containing this protocol, the
+prompt, the evaluator, and the generation script. Credentials must not be
+stored in the repository or candidate artifacts.
+
+Run the generator once for attempts 1 through 10. Each attempt makes one
+request. Do not retry, manually repair, or improve a response after it is
+returned. A malformed response, syntax error, missing `make_model`, or other
+protocol violation still consumes its attempt and is preserved as an outcome.
+Human edits are not permitted; `human_edits` is recorded as false for the
+official procedure.
+
+The generator preserves the returned message content under
+`candidates/raw/`, writes the candidate source under `candidates/source/`,
+and writes one metadata record per attempt under
+`candidates/metadata/candidate-manifest.ndjson`. It refuses to start if that
+manifest already exists, preventing multiple generation runs from being mixed.
+Records include the attempt number, model and generation settings, source
+commit, prompt hash, timestamps, request metadata where available, content
+hashes, and protocol status.
+
+Do not run final evaluation or expose hidden scores while candidates are being
+generated. After all ten attempts have been preserved, review only for
+classification and protocol reporting, not for improvement. Commit the
+candidate artifacts and manifest, record that freeze commit, and run final
+evaluation only from that frozen candidate set.
+
+The current subprocess evaluator and generator are suitable for cooperative
+candidates, not hostile-code isolation. The pilot must not claim to prevent a
+candidate from inspecting files, the evaluator, or the network unless those
+capabilities are separately restricted and verified.
