@@ -1,7 +1,27 @@
 # Measuring independently validated AI R&D progress
 
 This project pilots a small, reproducible measurement of whether an AI system
-can produce machine-learning candidates that improve hidden-test performance under a fixed attempt budget.
+can produce machine-learning candidates that improve hidden-test performance
+under a fixed attempt budget.
+
+## Quick start
+
+This repository contains the completed first-phase artifact. To inspect the
+reported experiment:
+
+1. Read the [protocol](protocol.md), [detailed report](report.md), and
+   [official development results](results-official-dev.jsonl).
+2. Read the [official final results](results-official-final.jsonl).
+3. Inspect the [frozen candidate sources](candidates/source/) and the
+   [evaluator](evaluate.py).
+4. Follow the evaluator procedure documented in the protocol if you need to
+   reproduce the recorded analysis. The final results are historical artifacts
+   from the frozen candidate set; do not regenerate candidates as part of
+   reproduction.
+
+The evaluator uses Python with `numpy`, `scikit-learn`, and the dependencies
+listed by the project environment. The committed results and report are the
+primary record of the completed pilot.
 
 ## Question
 
@@ -18,7 +38,7 @@ acceleration. It does not claim to measure recursive self-improvement.
   `load_digits` dataset.
 - **Budget:** ten candidate attempts.
 - **Model:** `openai/gpt-5.6-luna` through OpenRouter's `openai` provider.
-- **Prompt:** the versioned `candidate_prompt.txt` file.
+- **Prompt:** the versioned [candidate prompt](candidate_prompt.txt).
 - **Evaluation:** fixed training, development, and hidden splits with a fixed
   seed.
 - **Improvement threshold:** hidden score at least `0.01` above the baseline.
@@ -43,6 +63,9 @@ The baseline hidden score was `0.95556`. The experiment produced:
 - attempt 4 preserved as a failure because it did not define `make_model()`;
 - all valid candidates passing runtime and clean-rerun checks.
 
+This is a cooperative, one-task pilot; the 9/10 rate is not evidence of
+general recursive self-improvement. The limitations below are material to
+interpreting the result.
 
 The primary rate uses all ten attempts as the denominator; the 9/9 figure is
 reported separately because attempt 4 was structurally invalid.
@@ -62,20 +85,44 @@ do not demonstrate nine independent discoveries.
 Accordingly, this should be described as a cooperative one-task pilot, not as
 general evidence of recursive self-improvement.
 
-## Artifacts and reproduction
+## Reproducing the completed pilot
 
-- `protocol.md` — the pre-specified experiment protocol.
-- `candidate_prompt.txt` — the fixed generation prompt.
-- `generate_candidates.py` — candidate-generation script.
-- `evaluate.py` — development and final evaluator.
-- `candidates/` — raw returned message content, source files, and manifest.
-- `results-official-dev.jsonl` — development results.
-- `results-official-final.jsonl` — final results.
-- `report.md` — detailed results and limitations.
+The completed pilot is reproduced from the frozen sources under
+[`candidates/source/`](candidates/source/). The exact evaluator procedure,
+including the baseline, development and final modes, runtime limit, clean-rerun
+checks, and official output files, is documented in the [protocol](protocol.md)
+and summarized in the [report](report.md).
 
+The two committed JSONL files are the authoritative recorded outputs:
 
-Development and final evaluation commands are documented in `protocol.md`.
-Final results should be regenerated only from the frozen candidate commit.
+- [Official development results](results-official-dev.jsonl)
+- [Official final results](results-official-final.jsonl)
+
+Reproduction means rerunning the evaluator against this frozen candidate set.
+It does not mean generating new candidates or replacing the official results.
+
+## Regenerating candidates — outside the completed pilot
+
+[`generate_candidates.py`](generate_candidates.py) launches a new candidate-
+generation experiment through the configured provider. It requires an
+`OPENROUTER_API_KEY`, consumes a new attempt budget, and produces outputs that
+are not part of the completed pilot. Running it is therefore a new experiment,
+not reproduction of the result reported here.
+
+Do not run candidate generation merely to reproduce the first phase. Preserve
+any new outputs separately and do not overwrite the frozen candidates or the
+official results.
+
+## Artifacts and provenance
+
+- [Protocol](protocol.md) — the pre-specified experiment protocol.
+- [Candidate prompt](candidate_prompt.txt) — the fixed generation prompt.
+- [Candidate-generation script](generate_candidates.py).
+- [Evaluator](evaluate.py) — development and final evaluation.
+- [Frozen candidates](candidates/) — raw responses, source files, and manifest.
+- [Official development results](results-official-dev.jsonl).
+- [Official final results](results-official-final.jsonl).
+- [Detailed report](report.md) — results and limitations.
 
 The generation/protocol provenance is recorded in commit
 `71d9138895f7f0b8ca1351fedecb7e5509e77a9e`. The frozen candidate set is in
