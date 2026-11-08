@@ -101,7 +101,7 @@ The two committed JSONL files are the authoritative recorded outputs:
 Reproduction means rerunning the evaluator against this frozen candidate set.
 It does not mean generating new candidates or replacing the official results.
 
-## Regenerating candidates — outside the completed pilot
+## Regenerating candidates outside the completed pilot
 
 [`generate_candidates.py`](generate_candidates.py) launches a new candidate-
 generation experiment through the configured provider. It requires an
@@ -115,14 +115,14 @@ official results.
 
 ## Artifacts and provenance
 
-- [Protocol](protocol.md) — the pre-specified experiment protocol.
-- [Candidate prompt](candidate_prompt.txt) — the fixed generation prompt.
+- [Protocol](protocol.md): the pre-specified experiment protocol.
+- [Candidate prompt](candidate_prompt.txt): the fixed generation prompt.
 - [Candidate-generation script](generate_candidates.py).
-- [Evaluator](evaluate.py) — development and final evaluation.
-- [Frozen candidates](candidates/) — raw responses, source files, and manifest.
+- [Evaluator](evaluate.py): development and final evaluation.
+- [Frozen candidates](candidates/): raw responses, source files, and manifest.
 - [Official development results](results-official-dev.jsonl).
 - [Official final results](results-official-final.jsonl).
-- [Detailed report](report.md) — results and limitations.
+- [Detailed report](report.md): results and limitations.
 
 The generation/protocol provenance is recorded in commit
 `71d9138895f7f0b8ca1351fedecb7e5509e77a9e`. The frozen candidate set is in
